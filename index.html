@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nokia Composer (RTTTL Player)</title>
+
+    <link rel="stylesheet" href="https://fonts.xz.style/serve/inter.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@exampledev/new.css@1.1.2/new.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/styles/zenburn.min.css" />
+    <link href="https://fonts.cdnfonts.com/css/nokia-cellphone-fc" rel="stylesheet" />
+    <style>
+      body { max-width: 900px;}
+      #js-composer textarea {
+        width: 100%;
+        height: 100px;
+        line-height: 1.5em;
+        font-family: "Nokia Cellphone FC", sans-serif;
+      }
+      #js-composer select {
+        float: right;
+      }
+    </style>
+
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <script src="https://unpkg.com/react@16/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js" crossorigin></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/highlight.min.js"></script>
+  </head>
+  <body>
+    <header>
+      <h1>Nokia Composer</h1>
+    </header>
+
+    <div id="js-composer"></div>
+
+    <details>
+      <summary>View source</summary>
+      <pre id="js-view-source"></pre>
+    </details>
+
+    <script>
+      window.MELODIES = [
+        "A-Team:d=8,o=5,b=125:4d#6,a#,2d#6,16p,g#,4a#,4d#.,p,16g,16a#,d#6,a#,f6,2d#6,16p,c#.6,16c6,16a#,g#.,2a#",
+        "Mission Impossible:d=16,o=6,b=95:32d,32d#,32d,32d#,32d,32d#,32d,32d#,32d,32d,32d#,32e,32f,32f#,32g,g,8p,g,8p,a#,p,c7,p,g,8p,g,8p,f,p,f#,p,g,8p,g,8p,a#,p,c7,p,g,8p,g,8p,f,p,f#,p,a#,g,2d,32p,a#,g,2c#,32p,a#,g,2c,a#5,8c,2p,32p,a#5,g5,2f#,32p,a#5,g5,2f,32p,a#5,g5,2e,d#,8d",
+        "The Simpsons:d=4,o=5,b=160:c.6,e6,f#6,8a6,g.6,e6,c6,8a,8f#,8f#,8f#,2g,8p,8p,8f#,8f#,8f#,8g,a#.,8c6,8c6,8c6,c6",
+        "Indiana Jones:d=4,o=5,b=250:e,8p,8f,8g,8p,1c6,8p.,d,8p,8e,1f,p.,g,8p,8a,8b,8p,1f6,p,a,8p,8b,2c6,2d6,2e6,e,8p,8f,8g,8p,1c6,p,d6,8p,8e6,1f.6,g,8p,8g,e.6,8p,d6,8p,8g,e.6,8p,d6,8p,8g,f.6,8p,e6,8p,8d6,2c6",
+        "James Bond:d=4,o=5,b=80:32p,16c#6,32d#6,32d#6,16d#6,8d#6,16c#6,16c#6,16c#6,16c#6,32e6,32e6,16e6,8e6,16d#6,16d#6,16d#6,16c#6,32d#6,32d#6,16d#6,8d#6,16c#6,16c#6,16c#6,16c#6,32e6,32e6,16e6,8e6,16d#6,16d6,16c#6,16c#7,c.7,16g#6,16f#6,g#.6",
+        "Star Wars:d=4,o=5,b=45:32p,32f#,32f#,32f#,8b.,8f#.6,32e6,32d#6,32c#6,8b.6,16f#.6,32e6,32d#6,32c#6,8b.6,16f#.6,32e6,32d#6,32e6,8c#.6,32f#,32f#,32f#,8b.,8f#.6,32e6,32d#6,32c#6,8b.6,16f#.6,32e6,32d#6,32c#6,8b.6,16f#.6,32e6,32d#6,32e6,8c#6",
+        "Top Gun:d=4,o=4,b=31:32p,16c#,16g#,16g#,32f#,32f,32f#,32f,16d#,16d#,32c#,32d#,16f,32d#,32f,16f#,32f,32c#,16f,d#,16c#,16g#,16g#,32f#,32f,32f#,32f,16d#,16d#,32c#,32d#,16f,32d#,32f,16f#,32f,32c#,g#",
+        "Flinstones:d=4,o=5,b=40:32p,16f6,16a#,16a#6,32g6,16f6,16a#.,16f6,32d#6,32d6,32d6,32d#6,32f6,16a#,16c6,d6,16f6,16a#.,16a#6,32g6,16f6,16a#.,32f6,32f6,32d#6,32d6,32d6,32d#6,32f6,16a#,16c6,a#,16a6,16d.6,16a#6,32a6,32a6,32g6,32f#6,32a6,8g6,16g6,16c.6,32a6,32a6,32g6,32g6,32f6,32e6,32g6,8f6,16f6,16a#.,16a#6,32g6,16f6,16a#.,16f6,32d#6,32d6,32d6,32d#6,32f6,16a#,16c.6,32d6,32d#6,32f6,16a#,16c.6,32d6,32d#6,32f6,16a#6,16c7,8a#.6",
+      ];
+    </script>
+
+    <script type="text/babel" id="js-source">
+const toDefaults = unparsedDefaults =>
+  unparsedDefaults.split(",").reduce(
+    (defaults, option) => {
+      const [key, value] = option.split("=");
+      switch (key) {
+        case "d": return { ...defaults, duration: value };
+        case "o": return { ...defaults, octave: value };
+        case "b": return { ...defaults, beat: value };
+        default: return defaults;
+      }
+    },
+    { duration: 4, octave: 6, beat: 63 }
+  );
+
+const toMelody = (melody, defaults) =>
+  melody.split(",").map(unparsedNote => {
+    const { groups: parsed } = unparsedNote.match(
+      /(?<duration>1|2|4|8|16|32|64)?(?<note>(?:[a-g]|p)#?){1}(?<dot>\.?)(?<octave>4|5|6|7)?/
+    );
+    const { duration, note, dot, octave, beat } = Object.keys(parsed)
+      .reduce((xs, x) => (parsed[x] ? { ...xs, [x]: parsed[x] } : xs), defaults);
+
+    return {
+      duration: (240 / beat / duration) * (dot ? 1.5 : 1),
+      frequency: note === "p" ? 0
+        : 261.63 * 2 ** (octave - 4 +
+          ["c", "c#", "d", "d#", "e", "f", "f#", "g", "g#", "a", "a#", "b"].indexOf(note) / 12),
+    };
+  });
+
+const parse = rtttl => {
+  const [_, unparsedDefaults, unparsedMelody] = rtttl.split(":");
+
+  return toMelody(unparsedMelody, toDefaults(unparsedDefaults));
+};
+
+function NokiaComposer({ melodies }) {
+  const [isPlaying, setPlaying] = React.useState(false);
+  const [composition, setComposition] = React.useState(melodies[0] || "");
+
+  React.useEffect(() => {
+    if (!isPlaying) return;
+
+    const audio = new (AudioContext || webkitAudioContext)();
+    const gain = audio.createGain();
+    const oscillator = audio.createOscillator();
+    oscillator.type = "square";
+    oscillator.connect(gain);
+    oscillator.onended = () => setPlaying(false);
+    gain.connect(audio.destination);
+    oscillator.start();
+
+    let time = 0;
+    parse(composition).forEach(({ duration, frequency }) => {
+      oscillator.frequency.setValueAtTime(frequency, time);
+      gain.gain.setValueAtTime(1, time);
+      time += duration;
+      gain.gain.setValueAtTime(0, time);
+    });
+    oscillator.stop(time);
+
+    return async () => {
+      await audio.close();
+    };
+  }, [isPlaying]);
+
+  return (
+    <div>
+      <button onClick={e => setPlaying(!isPlaying)} disabled={!composition}>
+        {isPlaying ? "Stop" : "Play"}
+      </button>
+      <select onChange={e => setComposition(e.target.value)}>
+        {melodies.map(tune => (
+          <option value={tune}>{tune.split(":")[0]}</option>
+        ))}
+      </select>
+      <textarea
+        value={composition}
+        disabled={isPlaying}
+        onChange={e => setComposition(e.target.value)}></textarea>
+    </div>
+  );
+}
+
+ReactDOM.render(
+  <NokiaComposer melodies={window.MELODIES} />,
+  document.getElementById("js-composer")
+);
+    </script>
+
+    <script>
+      document.getElementById("js-view-source").innerText = document.getElementById("js-source").innerHTML.trim();
+      hljs.highlightBlock(document.getElementById("js-view-source"));
+    </script>
+  </body>
+</html>
