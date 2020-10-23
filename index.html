@@ -7,25 +7,24 @@
 
     <link rel="stylesheet" href="https://fonts.xz.style/serve/inter.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@exampledev/new.css@1.1.2/new.min.css" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/styles/zenburn.min.css" />
-    <link href="https://fonts.cdnfonts.com/css/nokia-cellphone-fc" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.22.0/themes/prism-okaidia.min.css" />
+    <link rel="stylesheet" href="https://fonts.cdnfonts.com/css/nokia-cellphone-fc" />
     <style>
-      body { max-width: 900px;}
+      body { max-width: 900px; }
+      pre { font-size: .9em !important }
+      #js-composer select { float: right; }
       #js-composer textarea {
         width: 100%;
         height: 100px;
         line-height: 1.5em;
         font-family: "Nokia Cellphone FC", sans-serif;
       }
-      #js-composer select {
-        float: right;
-      }
     </style>
 
     <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
     <script src="https://unpkg.com/react@16/umd/react.production.min.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js" crossorigin></script>
-    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.22.0/prism.min.js" data-manual></script>
   </head>
   <body>
     <header>
@@ -35,60 +34,135 @@
     <div id="js-composer"></div>
 
     <details>
-      <summary>View source</summary>
-      <pre id="js-view-source"></pre>
+      <summary>View RTTTL parser source</summary>
+      <pre id="js-view-parser-source" class="language-js"></pre>
+    </details>
+
+    <details>
+      <summary>View WAV generation source</summary>
+      <pre id="js-view-wav-generation-source" class="language-js"></pre>
+    </details>
+
+    <details>
+      <summary>View player source</summary>
+      <pre id="js-view-player-source" class="language-js"></pre>
     </details>
 
     <script>
       window.MELODIES = [
+        "Super Mario:d=4,o=5,b=100:16e6,16e6,32p,8e6,16c6,8e6,8g6,8p,8g,8p,8c6,16p,8g,16p,8e,16p,8a,8b,16a#,8a,16g.,16e6,16g6,8a6,16f6,8g6,8e6,16c6,16d6,8b,16p,8c6,16p,8g,16p,8e,16p,8a,8b,16a#,8a,16g.,16e6,16g6,8a6,16f6,8g6,8e6,16c6,16d6,8b,8p,16g6,16f#6,16f6,16d#6,16p,16e6,16p,16g#,16a,16c6,16p,16a,16c6,16d6,8p,16g6,16f#6,16f6,16d#6,16p,16e6,16p,16c7,16p,16c7,16c7,p,16g6,16f#6,16f6,16d#6,16p,16e6,16p,16g#,16a,16c6,16p,16a,16c6,16d6,8p,16d#6,8p,16d6,8p,16c6",
         "A-Team:d=8,o=5,b=125:4d#6,a#,2d#6,16p,g#,4a#,4d#.,p,16g,16a#,d#6,a#,f6,2d#6,16p,c#.6,16c6,16a#,g#.,2a#",
         "Mission Impossible:d=16,o=6,b=95:32d,32d#,32d,32d#,32d,32d#,32d,32d#,32d,32d,32d#,32e,32f,32f#,32g,g,8p,g,8p,a#,p,c7,p,g,8p,g,8p,f,p,f#,p,g,8p,g,8p,a#,p,c7,p,g,8p,g,8p,f,p,f#,p,a#,g,2d,32p,a#,g,2c#,32p,a#,g,2c,a#5,8c,2p,32p,a#5,g5,2f#,32p,a#5,g5,2f,32p,a#5,g5,2e,d#,8d",
         "The Simpsons:d=4,o=5,b=160:c.6,e6,f#6,8a6,g.6,e6,c6,8a,8f#,8f#,8f#,2g,8p,8p,8f#,8f#,8f#,8g,a#.,8c6,8c6,8c6,c6",
         "Indiana Jones:d=4,o=5,b=250:e,8p,8f,8g,8p,1c6,8p.,d,8p,8e,1f,p.,g,8p,8a,8b,8p,1f6,p,a,8p,8b,2c6,2d6,2e6,e,8p,8f,8g,8p,1c6,p,d6,8p,8e6,1f.6,g,8p,8g,e.6,8p,d6,8p,8g,e.6,8p,d6,8p,8g,f.6,8p,e6,8p,8d6,2c6",
-        "James Bond:d=4,o=5,b=80:32p,16c#6,32d#6,32d#6,16d#6,8d#6,16c#6,16c#6,16c#6,16c#6,32e6,32e6,16e6,8e6,16d#6,16d#6,16d#6,16c#6,32d#6,32d#6,16d#6,8d#6,16c#6,16c#6,16c#6,16c#6,32e6,32e6,16e6,8e6,16d#6,16d6,16c#6,16c#7,c.7,16g#6,16f#6,g#.6",
+        "James Bond:d=4,o=5,b=320:c,8d,8d,d,2d,c,c,c,c,8d#,8d#,2d#,d,d,d,c,8d,8d,d,2d,c,c,c,c,8d#,8d#,d#,2d#,d,c#,c,c6,1b.,g,f,1g.",
         "Star Wars:d=4,o=5,b=45:32p,32f#,32f#,32f#,8b.,8f#.6,32e6,32d#6,32c#6,8b.6,16f#.6,32e6,32d#6,32c#6,8b.6,16f#.6,32e6,32d#6,32e6,8c#.6,32f#,32f#,32f#,8b.,8f#.6,32e6,32d#6,32c#6,8b.6,16f#.6,32e6,32d#6,32c#6,8b.6,16f#.6,32e6,32d#6,32e6,8c#6",
-        "Top Gun:d=4,o=4,b=31:32p,16c#,16g#,16g#,32f#,32f,32f#,32f,16d#,16d#,32c#,32d#,16f,32d#,32f,16f#,32f,32c#,16f,d#,16c#,16g#,16g#,32f#,32f,32f#,32f,16d#,16d#,32c#,32d#,16f,32d#,32f,16f#,32f,32c#,g#",
         "Flinstones:d=4,o=5,b=40:32p,16f6,16a#,16a#6,32g6,16f6,16a#.,16f6,32d#6,32d6,32d6,32d#6,32f6,16a#,16c6,d6,16f6,16a#.,16a#6,32g6,16f6,16a#.,32f6,32f6,32d#6,32d6,32d6,32d#6,32f6,16a#,16c6,a#,16a6,16d.6,16a#6,32a6,32a6,32g6,32f#6,32a6,8g6,16g6,16c.6,32a6,32a6,32g6,32g6,32f6,32e6,32g6,8f6,16f6,16a#.,16a#6,32g6,16f6,16a#.,16f6,32d#6,32d6,32d6,32d#6,32f6,16a#,16c.6,32d6,32d#6,32f6,16a#,16c.6,32d6,32d#6,32f6,16a#6,16c7,8a#.6",
       ];
     </script>
 
-    <script type="text/babel" id="js-source">
+    <script type="text/babel" id="js-parser-source">
 const toDefaults = unparsedDefaults =>
   unparsedDefaults.split(",").reduce(
     (defaults, option) => {
       const [key, value] = option.split("=");
       switch (key) {
-        case "d": return { ...defaults, duration: value };
-        case "o": return { ...defaults, octave: value };
-        case "b": return { ...defaults, beat: value };
-        default: return defaults;
+        case "d":
+          return { ...defaults, duration: value };
+        case "o":
+          return { ...defaults, octave: value };
+        case "b":
+          return { ...defaults, beat: value };
+        default:
+          return defaults;
       }
     },
     { duration: 4, octave: 6, beat: 63 }
   );
 
-const toMelody = (melody, defaults) =>
-  melody.split(",").map(unparsedNote => {
+const toMelody = (melody, defaults) => {
+  const notes = ["c", "c#", "d", "d#", "e", "f", "f#", "g", "g#", "a", "a#", "b"];
+  const middleC = 261.63;
+
+  return melody.split(",").map(unparsedNote => {
     const { groups: parsed } = unparsedNote.match(
       /(?<duration>1|2|4|8|16|32|64)?(?<note>(?:[a-g]|p)#?){1}(?<dot>\.?)(?<octave>4|5|6|7)?/
     );
-    const { duration, note, dot, octave, beat } = Object.keys(parsed)
-      .reduce((xs, x) => (parsed[x] ? { ...xs, [x]: parsed[x] } : xs), defaults);
+    const { duration, note, dot, octave, beat } = Object.keys(parsed).reduce(
+      (xs, x) => (parsed[x] ? { ...xs, [x]: parsed[x] } : xs),
+      defaults
+    );
 
     return {
       duration: (240 / beat / duration) * (dot ? 1.5 : 1),
-      frequency: note === "p" ? 0
-        : 261.63 * 2 ** (octave - 4 +
-          ["c", "c#", "d", "d#", "e", "f", "f#", "g", "g#", "a", "a#", "b"].indexOf(note) / 12),
+      frequency:
+        note === "p" ? 0 : middleC * 2 ** (octave - 4 + notes.indexOf(note.trim()) / 12),
     };
   });
+};
 
 const parse = rtttl => {
-  const [_, unparsedDefaults, unparsedMelody] = rtttl.split(":");
+  const [_, unparsedDefaults, unparsedMelody] = rtttl.split(":", 3);
 
   return toMelody(unparsedMelody, toDefaults(unparsedDefaults));
 };
+    </script>
 
+    <script type="text/babel" id="js-wav-generation-source">
+const generateAudioBuffer = async rtttl => {
+  const melody = parse(rtttl);
+  const totalDuration = melody.reduce((total, { duration }) => total + duration, 0);
+
+  const audio = new OfflineAudioContext(1, totalDuration * 44100, 44100);
+  const oscillator = audio.createOscillator();
+  oscillator.type = "square";
+  oscillator.connect(audio.destination);
+
+  let time = 0;
+  oscillator.start();
+  melody.forEach(({ duration, frequency }) => {
+    oscillator.frequency.setValueAtTime(frequency, time);
+    time += duration;
+  });
+  oscillator.stop(time);
+
+  return audio.startRendering();
+};
+
+const generateWavBlob = audioBuffer => {
+  const writeString = (view, offset, string) => {
+    string.split("").forEach((character, index) => {
+      view.setUint8(offset + index, character.charCodeAt());
+    });
+  };
+
+  const samples = audioBuffer.getChannelData(0);
+  const bytesPerSample = 4;
+  const buffer = new ArrayBuffer(44 + samples.length * bytesPerSample);
+  const view = new DataView(buffer);
+
+  writeString(view, 0, "RIFF"); // ChunkID
+  view.setUint32(4, 36 + samples.length * bytesPerSample, true); // ChunkSize
+  writeString(view, 8, "WAVE"); // Format
+  writeString(view, 12, "fmt "); // Subchunk1ID
+  view.setUint32(16, 16, true); // Subchunk1Size
+  view.setUint16(20, 3, true); // AudioFormat (IEEE float)
+  view.setUint16(22, 1, true); // NumChannels
+  view.setUint32(24, audioBuffer.sampleRate, true); // SampleRate
+  view.setUint32(28, audioBuffer.sampleRate * bytesPerSample, true); // ByteRate
+  view.setUint16(32, bytesPerSample, true); // BlockAlign
+  view.setUint16(34, 32, true); // BitsPerSample
+  writeString(view, 36, "data"); // Subchunk2ID
+  view.setUint32(40, samples.length * bytesPerSample, true); // Subchunk2Size
+  samples.forEach((sample, index) => {
+    view.setFloat32(44 + index * bytesPerSample, sample, true); // Data
+  });
+
+  return new Blob([view], { type: "audio/wav" });
+};
+    </script>
+
+    <script type="text/babel" id="js-player-source">
 function NokiaComposer({ melodies }) {
   const [isPlaying, setPlaying] = React.useState(false);
   const [composition, setComposition] = React.useState(melodies[0] || "");
@@ -96,21 +170,17 @@ function NokiaComposer({ melodies }) {
   React.useEffect(() => {
     if (!isPlaying) return;
 
-    const audio = new (AudioContext || webkitAudioContext)();
-    const gain = audio.createGain();
+    const audio = new AudioContext();
     const oscillator = audio.createOscillator();
     oscillator.type = "square";
-    oscillator.connect(gain);
+    oscillator.connect(audio.destination);
     oscillator.onended = () => setPlaying(false);
-    gain.connect(audio.destination);
-    oscillator.start();
 
     let time = 0;
+    oscillator.start();
     parse(composition).forEach(({ duration, frequency }) => {
       oscillator.frequency.setValueAtTime(frequency, time);
-      gain.gain.setValueAtTime(1, time);
       time += duration;
-      gain.gain.setValueAtTime(0, time);
     });
     oscillator.stop(time);
 
@@ -119,20 +189,33 @@ function NokiaComposer({ melodies }) {
     };
   }, [isPlaying]);
 
+  const handleDownload = async e => {
+    const blob = generateWavBlob(await generateAudioBuffer(composition));
+
+    const autoDownloadLink = document.createElement("a");
+    autoDownloadLink.href = window.URL.createObjectURL(blob);
+    autoDownloadLink.download = composition.split(":")[0];
+    autoDownloadLink.click();
+  };
+
   return (
     <div>
       <button onClick={e => setPlaying(!isPlaying)} disabled={!composition}>
         {isPlaying ? "Stop" : "Play"}
+      </button>{" "}
+      <button onClick={handleDownload} disabled={!composition}>
+        Download
       </button>
       <select onChange={e => setComposition(e.target.value)}>
-        {melodies.map(tune => (
-          <option value={tune}>{tune.split(":")[0]}</option>
+        {melodies.map(melody => (
+          <option value={melody}>{melody.split(":")[0]}</option>
         ))}
       </select>
       <textarea
         value={composition}
         disabled={isPlaying}
-        onChange={e => setComposition(e.target.value)}></textarea>
+        onChange={e => setComposition(e.target.value)}
+      ></textarea>
     </div>
   );
 }
@@ -143,9 +226,10 @@ ReactDOM.render(
 );
     </script>
 
-    <script>
-      document.getElementById("js-view-source").innerText = document.getElementById("js-source").innerHTML.trim();
-      hljs.highlightBlock(document.getElementById("js-view-source"));
+    <script type="text/babel">
+      ["parser", "wav-generation", "player"].forEach(name => {
+        document.getElementById(`js-view-${name}-source`).innerHTML = Prism.highlight(document.getElementById(`js-${name}-source`).innerHTML.trim(), Prism.languages.javascript, 'javascript');
+      });
     </script>
   </body>
 </html>
