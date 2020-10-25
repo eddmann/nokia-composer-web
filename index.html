@@ -96,7 +96,7 @@ const toMelody = (melody, defaults) => {
     return {
       duration: (240 / beat / duration) * (dot ? 1.5 : 1),
       frequency:
-        note === "p" ? 0 : middleC * 2 ** (octave - 4 + notes.indexOf(note.trim()) / 12),
+        note === "p" ? 0 : middleC * 2 ** (octave - 4 + notes.indexOf(note) / 12),
     };
   });
 };
